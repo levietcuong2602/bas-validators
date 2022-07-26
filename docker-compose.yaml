@@ -1,0 +1,39 @@
+version: '3'
+
+# networks:
+#   outside:
+#     driver: bridge
+#     ipam:
+#       driver: default
+#       config:
+#       - subnet: 192.168.10.0/24
+
+services:
+  validator:
+    image: ankrnetwork/bas-template-bsc:devel
+    command:
+      - 'geth'
+      - '--datadir=/datadir'
+      - '--genesis=/datadir/genesis.json'
+      - '--mine'
+      - '--password=/datadir/password.txt'
+      - '--allow-insecure-unlock'
+      - '--unlock=0x2af4af18b65bbd2ffdc8f6ed6536ec7ce8c4c8f5'
+      - '--miner.etherbase=0x2af4af18b65bbd2ffdc8f6ed6536ec7ce8c4c8f5'
+      - '--bootnodes=enode://5c8e90050fabb7e14e4921dc107caf533140112245e7a231d0edc49861cd779760ad4804e7034952a5cc79422fa9d31c54e9a6141fb4995af7a6bfce7a39140f@bootnode:30303'
+      - '--gcmode=archive'
+      - '--syncmode=full'
+      - '--networkid=17243'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "bootnode:192.168.10.140"
+    volumes:
+      - './genesis.json:/datadir/genesis.json'
+      - './miners/keystore:/datadir/keystore'
+      - './miners/password.txt:/datadir/password.txt'
+      - './datadir/validator:/datadir/geth'
+    restart: always
+    # networks:
+    #   default:
+    #   outside:
+    #     ipv4_address: 192.168.10.140
